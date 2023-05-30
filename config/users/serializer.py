@@ -12,18 +12,21 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'password', 'email', 'first_name', 'last_name']
    
-    # def update(self, instance, validated_data):
-    #     instance.email = validated_data.get('email', instance.email)
-    #     instance.first_name = validated_data.get('first_name', instance.first_name)
-    #     instance.last_name = validated_data.get('last_name', instance.last_name)
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
 
-    #     # Check if username is included in the request data
-    #     new_username = validated_data.get('username')
-    #     if new_username:
-    #         instance.username = new_username
+        # Check if username is included in the request data
+        new_username = validated_data.get('username')
+        if new_username:
+            instance.username = new_username
 
-    #     instance.save()
-    #     return instance
+        instance.save()
+        return instance
+    
+
 # class _UserActionBase(serializers.Serializer):
 
 #     def create(self, validated_data):

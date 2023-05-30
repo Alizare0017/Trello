@@ -2,12 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAdminUser
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-
 from .models import CustomUser
+from workspace.models import Workspace
+from workspace.serializer import WorkpaceSerializer
 from .serializer import UserSerializer
 
 # Create your views here.
@@ -50,10 +50,24 @@ class UserRetrieveView(APIView):
         serializer = UserSerializer(user)
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-    def put(self,request,pk):
-        serializer = UserSerializer(request.user,data=request.data,partial=True)
+    def put(self,request):
+        print(request.user)
+        user = request.user
+        serializer = UserSerializer(user,data=request.data)
         if serializer.is_valid():
-            user = get_object_or_404(CustomUser, pk=pk)
-            user.save()
+            serializer.save()
             return Response(status=status.HTTP_200_OK, data=serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'erros' : serializer.errors})
+
+
+# Retrieve All User Workspaces
+class WorksapceRetrieveView(APIView):
+    permission_classes = [IsAdminUser]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self,request,pk):
+        workspace = Workspace.objects.filter(owner=pk)
+        if workspace.exists():
+            serializer = WorkpaceSerializer(workspace, many=True)
+            return Response(status=status.HTTP_200_OK, data=serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'error':'User dose not have workspace!'})
