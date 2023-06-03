@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Membership,Workspace
+from .models import Membership, Workspace, Board
 
 # Register your models here.
 
@@ -15,6 +15,10 @@ class MembershipAdmin(admin.ModelAdmin):
     model = Membership
     list_display = ('id','workspace','user')
 
+class BoardAdmin(admin.ModelAdmin):
+    model = Board
+    list_display = ('id','workspace_id','visiblity','title')
 
+admin.site.register(Board, BoardAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
 admin.site.register(Membership, MembershipAdmin)
